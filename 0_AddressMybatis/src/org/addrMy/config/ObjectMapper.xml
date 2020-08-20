@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper     
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"     
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="org.addrMy.config.ObjectMapper">
+<!-- 하나의 함수처럼 이름을 지정해서 사용할 수 있다. -->
+<sql id="search">
+	<where>
+		<if test="word!=null and field=='name'">
+		name like '%${word}%'<!-- 둘중에 하나 사용하면 되는데 $는 getter의 값을 불러오는것 이라서 getter가 있을때만 사용가능하다. -->
+			<!-- name like '%'||#{word}||'%' -->
+		</if>
+		<if test="word!=null and field=='tel'">
+			tel like '%'||#{word}||'%'
+		</if>
+	</where>
+</sql>
+<!-- insert -->
+<insert id="insertData" parameterType="org.addrMy.model.AddressVO"><!--parameterType ?에 대한 결과값-->
+insert into address(num, name,zipcode, addr, tel)
+values(address_seq.nextval,#{name},#{zipcode},#{addr},#{tel})
+</insert>
+
+<!-- all select 등록하기-->
+<select id="listData" resultType="org.addrMy.model.AddressVO"><!--  -->
+	select*from address
+</select>
+
+<!-- countData 글 갯수-->
+<select id="countData" resultType="int">
+	select count(*) from address
+</select>
+<!-- 검색 Count -->
+<select id="countSearchData" resultType="int" parameterType="java.util.Map">
+	select count(*) from address
+<include refid="search"/>
+</select>
+
+<!-- viewData  상세보기 -->
+<select id="viewData" parameterType="int" resultType="org.addrMy.model.AddressVO">
+	select * from address where num=#{num}
+</select>
+
+<!-- updateData 수정하기-->
+<select id="updateData"  parameterType="org.addrMy.model.AddressVO">
+	update address set name=#{name},zipcode=#{zipcode},addr=#{addr},tel=#{tel} where num=#{num}
+</select>
+
+<!-- deleteData 삭제하기  -->
+<select id="deleteData" parameterType="int">
+	delete from address where num=#{num}
+</select>
+
+<!-- zipData  우편번호검색 경로는 / 유형은 . 으로 설정 -->
+<select id="zipData" parameterType="String" resultType="zipvo">
+ select*from zipcode where dong like '%'||#{dong}||'%'
+<!-- select*from zipcode where dong like '%${dong}%' -->
+</select>
+
+<!-- searchData 검색 리스트 -->
+<select id="searchData" parameterType="java.util.Map" resultType="org.addrMy.model.AddressVO">
+	select*from address
+<include refid="search"/>
+</select>
+
+<!-- deleteAjaxData 리스트에서 삭제하기 -->
+<select id="deleteAjaxData" parameterType="int">
+delete from address where num=#{num}
+</select>
+
+</mapper>
