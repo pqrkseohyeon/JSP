@@ -49,6 +49,7 @@ function fdelete(num){
 			htmlStr +="<td>"+val.tel+"</td>";
 			htmlStr +="<td>삭제</td>";
 			htmlStr +="</tr>";
+			
 		})
 		$("table tbody").html(htmlStr);
 	})
